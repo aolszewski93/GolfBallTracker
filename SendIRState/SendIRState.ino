@@ -16,6 +16,7 @@
 #include <Wire.h>
 #include <ESPDateTime.h>
 #include <DateTime.h>
+#include <ArduinoJson.h>
 
 // Provide the token generation process info.
 #include "addons/TokenHelper.h"
@@ -51,6 +52,7 @@ String local_time;
 String databasePath;
 String IRSendPath;
 String IRPushPath;
+String JSONPath;
 int IRState;
 int IRSensor;
 
@@ -59,7 +61,11 @@ int IRSensor;
 unsigned long sendDataPrevMillis = 0;
 unsigned long timerDelay = 60000;
 
+// Json Object array
+//FirebaseJsonArray array;
 
+// Json Object Json
+FirebaseJson json;
 
 // Initialize WiFi
 void initWiFi() {
@@ -135,6 +141,8 @@ void pushInt(String path, int value){
   }
 }
 
+
+
 void setup(){
   Serial.begin(115200);
 
@@ -185,6 +193,7 @@ void setup(){
   databasePath = "/UsersData/" + uid;
   IRSendPath = databasePath + "/IRState-current";
   IRPushPath = databasePath + "/IRState-log";
+  JSONPath = databasePath + "/JSON-log";
 }
 
 void loop(){
@@ -199,6 +208,12 @@ void loop(){
   Serial.println(IRState);
   Serial.println(local_time);
 
+  // append to array
+  json.add("Time Stamp", local_time);
+  json.add("Ball1", IRState);
+
+  
+  
   if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)){
     sendDataPrevMillis = millis();
 
@@ -207,6 +222,9 @@ void loop(){
 
     //Append current state to RTDB
     pushInt(IRPushPath, IRState);
+
+    // set json
+    Firebase.RTDB.setJSON(&fbdo, JSONPath.c_str(), &json);
     
   }
   delay(100);
