@@ -52,7 +52,8 @@ String local_time;
 String databasePath;
 String IRSendPath;
 String IRPushPath;
-String JSONPath;
+String JSONSetPath;
+String JSONPushPath;
 int IRState;
 int IRSensor;
 
@@ -193,7 +194,8 @@ void setup(){
   databasePath = "/UsersData/" + uid;
   IRSendPath = databasePath + "/IRState-current";
   IRPushPath = databasePath + "/IRState-log";
-  JSONPath = databasePath + "/JSON-log";
+  JSONSetPath = databasePath + "/JSON-current-state";
+  JSONPushPath = databasePath + "/JSON-log";
 }
 
 void loop(){
@@ -220,11 +222,16 @@ void loop(){
     // Send readings to database:
     sendInt(IRSendPath, IRState);
 
+
     //Append current state to RTDB
-    pushInt(IRPushPath, IRState);
+    //pushInt(IRPushPath, IRState);
 
     // set json
-    Firebase.RTDB.setJSON(&fbdo, JSONPath.c_str(), &json);
+    Firebase.RTDB.setJSON(&fbdo, JSONSetPath.c_str(), &json);
+
+    // push json
+    Firebase.RTDB.pushJSON(&fbdo, JSONPushPath.c_str(), &json);
+
     
   }
   delay(100);
