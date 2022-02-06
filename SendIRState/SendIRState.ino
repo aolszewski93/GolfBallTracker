@@ -106,8 +106,13 @@ String getTime(){
   time_t t = time(NULL);
   String local_t = asctime(localtime(&t));
   String utc_t = asctime(gmtime(&t));
-  return local_t;
+
+  //remove certain characters from time stamp
+  int ind = local_t.indexOf('\n');
+  String local_t2 = local_t.substring(0,ind);
+  return local_t2;
 }
+
 // Write int values to the database
 void sendInt(String path, int value){
   if (Firebase.RTDB.setInt(&fbdo, path.c_str(), value)){
@@ -207,8 +212,8 @@ void loop(){
   // Get latest sensor readings
   IRState = digitalRead(IRSensor);
   
-  Serial.println(IRState);
-  Serial.println(local_time);
+  //Serial.println(IRState);
+  //Serial.println(local_time);
 
   // append to array
   json.add("Time Stamp", local_time);
