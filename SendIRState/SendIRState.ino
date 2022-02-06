@@ -1,9 +1,9 @@
 /*
-  Golf Stuff Prototyping 
-  This program is meant to read a digital input from an IR sensor and upload the sensor value to a Firebase RTDB
+  Golf Ball Inventory Tracking FW
+  This program is meant to read a digital input from IR sensors and upload the sensor value to a Firebase RTDB in a json format.
+  Format to include sensor state and a timestamp.  Data will also be organized by private users.
   
-  Some code in this document is based on tutorial found here: https://RandomNerdTutorials.com/esp32-esp8266-firebase-bme280-rtdb/
-
+  Copyright 2022 Albert Michael Olszewski <al.m.olszewski@gmail.com>
 */
 
 #include <Arduino.h>
