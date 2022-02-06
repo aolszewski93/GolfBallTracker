@@ -14,7 +14,9 @@
 #endif
 #include <Firebase_ESP_Client.h>
 #include <Wire.h>
-
+#include <ESPDateTime.h>
+#include <DateTime.h>
+#include <ArduinoJson.h>
 
 // Provide the token generation process info.
 #include "addons/TokenHelper.h"
@@ -43,10 +45,15 @@ FirebaseConfig config;
 // Variable to save USER UID
 String uid;
 
+// variable to save timestamp
+String local_time;
+
 // Variables to save database paths
 String databasePath;
 String IRSendPath;
 String IRPushPath;
+String JSONSetPath;
+String JSONPushPath;
 int IRState;
 int IRSensor;
 
@@ -55,7 +62,11 @@ int IRSensor;
 unsigned long sendDataPrevMillis = 0;
 unsigned long timerDelay = 60000;
 
+// Json Object array
+//FirebaseJsonArray array;
 
+// Json Object Json
+FirebaseJson json;
 
 // Initialize WiFi
 void initWiFi() {
@@ -69,7 +80,34 @@ void initWiFi() {
   Serial.println();
 }
 
+// Initialize TimeStamp
+void initDateTime() {
+  // setup this after wifi connected
+  // you can use custom timeZone,server and timeout
 
+  // UTC+5 for EST
+  DateTime.setTimeZone("UTC+5");
+  //   DateTime.setServer("asia.pool.ntp.org");
+  //   DateTime.begin(15 * 1000);
+  DateTime.setServer("time.pool.aliyun.com");
+  
+  //DateTime.setTimeZone("CST-5");
+  DateTime.begin();
+  if (!DateTime.isTimeValid()) {
+    Serial.println("Failed to get time from server.");
+  } else {
+    Serial.printf("Date Now is %s\n", DateTime.toISOString().c_str());
+    Serial.printf("Timestamp is %ld\n", DateTime.now());
+  }
+}
+
+// get the current time
+String getTime(){
+  time_t t = time(NULL);
+  String local_t = asctime(localtime(&t));
+  String utc_t = asctime(gmtime(&t));
+  return local_t;
+}
 // Write int values to the database
 void sendInt(String path, int value){
   if (Firebase.RTDB.setInt(&fbdo, path.c_str(), value)){
@@ -104,11 +142,15 @@ void pushInt(String path, int value){
   }
 }
 
+
+
 void setup(){
   Serial.begin(115200);
 
   //initialize wifi and sensors
   initWiFi();
+  //initialize DateTime
+  initDateTime();
   // GPIO5 as sensor
   IRSensor = 5;
   pinMode(IRSensor, INPUT_PULLUP);
@@ -152,22 +194,44 @@ void setup(){
   databasePath = "/UsersData/" + uid;
   IRSendPath = databasePath + "/IRState-current";
   IRPushPath = databasePath + "/IRState-log";
+  JSONSetPath = databasePath + "/JSON-current-state";
+  JSONPushPath = databasePath + "/JSON-log";
 }
 
 void loop(){
   // Send new readings to database
+
+  // Get Time Stamp
+  local_time = getTime();
+  
   // Get latest sensor readings
   IRState = digitalRead(IRSensor);
+  
   Serial.println(IRState);
+  Serial.println(local_time);
 
+  // append to array
+  json.add("Time Stamp", local_time);
+  json.add("Ball1", IRState);
+
+  
+  
   if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)){
     sendDataPrevMillis = millis();
 
     // Send readings to database:
     sendInt(IRSendPath, IRState);
 
+
     //Append current state to RTDB
-    pushInt(IRPushPath, IRState);
+    //pushInt(IRPushPath, IRState);
+
+    // set json
+    Firebase.RTDB.setJSON(&fbdo, JSONSetPath.c_str(), &json);
+
+    // push json
+    Firebase.RTDB.pushJSON(&fbdo, JSONPushPath.c_str(), &json);
+
     
   }
   delay(100);
