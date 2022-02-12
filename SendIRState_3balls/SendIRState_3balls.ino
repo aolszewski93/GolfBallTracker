@@ -56,6 +56,7 @@ String IRSendPath;
 String IRPushPath;
 String JSONSetPath;
 String JSONPushPath;
+String OrderPath;
 
 // set pins and states for sensors
 int IRSensor1 = 5;
@@ -64,6 +65,7 @@ int IRSensor3 = 14;
 int IRState1 = 1; //sets pin state to off
 int IRState2 = 1; //sets pin state to off
 int IRState3 = 1;
+int TotalBalls = 0; //keeps track of total balls
 
 
 // Timer variables (send new readings every minute)
@@ -220,6 +222,7 @@ void setup(){
   IRPushPath = databasePath + "/IRState-log";
   JSONSetPath = databasePath + "/JSON-current-state";
   JSONPushPath = databasePath + "/JSON-log";
+  OrderPath = databasePath + "/Order-log";
 }
 
 void loop(){
@@ -232,12 +235,14 @@ void loop(){
   IRState1 = ballpresent(IRSensor1);
   IRState2 = ballpresent(IRSensor2);
   IRState3 = ballpresent(IRSensor3);
+  TotalBalls = IRState1 + IRState2 + IRState3;
   
   // append to array
   json.add("Time Stamp", local_time);
   json.add("Ball1", IRState1);
   json.add("Ball2", IRState2);
   json.add("Ball3", IRState3);
+  json.add("TotalBalls", TotalBalls);
 
   
   
@@ -256,6 +261,11 @@ void loop(){
 
     // push json
     Firebase.RTDB.pushJSON(&fbdo, JSONPushPath.c_str(), &json);
+
+    // if totalballs are less than a threshold, push to order json path
+    if (TotalBalls < 2) {
+      Firebase.RTDB.pushJSON(&fbdo, OrderPath.c_str(), &json);
+    }
 
     
   }
