@@ -56,6 +56,7 @@ String IRSendPath;
 String IRPushPath;
 String JSONSetPath;
 String JSONPushPath;
+String OrderPath;
 
 // set pins and states for sensors
 int IRSensor1 = 5;
@@ -220,6 +221,7 @@ void setup(){
   IRPushPath = databasePath + "/IRState-log";
   JSONSetPath = databasePath + "/JSON-current-state";
   JSONPushPath = databasePath + "/JSON-log";
+  OrderPath = databasePath + "/Order-log";
 }
 
 void loop(){
