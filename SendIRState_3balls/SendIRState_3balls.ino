@@ -2,6 +2,8 @@
   Golf Ball Inventory Tracking FW
   This program is meant to read a digital input from IR sensors and upload the sensor value to a Firebase RTDB in a json format.
   Format to include sensor state and a timestamp.  Data will also be organized by private users.
+
+  When there are 2 missing balls, data will be pushed to an ordering json.
   
   Copyright 2022 Albert Michael Olszewski <al.m.olszewski@gmail.com>
 */
@@ -54,8 +56,14 @@ String IRSendPath;
 String IRPushPath;
 String JSONSetPath;
 String JSONPushPath;
-int IRState;
-int IRSensor;
+
+// set pins and states for sensors
+int IRSensor1 = 5;
+int IRSensor2 = 4;
+int IRSensor3 = 14;
+int IRState1 = 1; //sets pin state to off
+int IRState2 = 1; //sets pin state to off
+int IRState3 = 1;
 
 
 // Timer variables (send new readings every minute)
@@ -156,9 +164,10 @@ void setup(){
   initWiFi();
   //initialize DateTime
   initDateTime();
-  // GPIO5 as sensor
-  IRSensor = 5;
-  pinMode(IRSensor, INPUT_PULLUP);
+  // Gset pinmode of sensors
+  pinMode(IRSensor1, INPUT_PULLUP);
+  pinMode(IRSensor2, INPUT_PULLUP);
+  pinMode(IRSensor2, INPUT_PULLUP);
   Serial.println("IR sensor initialized.");
 
 
@@ -210,14 +219,15 @@ void loop(){
   local_time = getTime();
   
   // Get latest sensor readings
-  IRState = digitalRead(IRSensor);
+  IRState1 = digitalRead(IRSensor1);
+  IRState2 = digitalRead(IRSensor2);
+  IRState3 = digitalRead(IRSensor3);
   
-  //Serial.println(IRState);
-  //Serial.println(local_time);
-
   // append to array
   json.add("Time Stamp", local_time);
-  json.add("Ball1", IRState);
+  json.add("Ball1", IRState1);
+  json.add("Ball2", IRState2);
+  json.add("Ball3", IRState3);
 
   
   
@@ -225,7 +235,7 @@ void loop(){
     sendDataPrevMillis = millis();
 
     // Send readings to database:
-    sendInt(IRSendPath, IRState);
+//    sendInt(IRSendPath, IRState);
 
 
     //Append current state to RTDB
