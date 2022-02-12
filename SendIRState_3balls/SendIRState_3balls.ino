@@ -121,6 +121,16 @@ String getTime(){
   return local_t2;
 }
 
+//function that flips sensor reading.  1 = ball is present.  0 = ball is missing.
+int ballpresent(int IRpin){
+  if (digitalRead(IRpin) == 1){
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
 // Write int values to the database
 void sendInt(String path, int value){
   if (Firebase.RTDB.setInt(&fbdo, path.c_str(), value)){
@@ -219,9 +229,9 @@ void loop(){
   local_time = getTime();
   
   // Get latest sensor readings
-  IRState1 = digitalRead(IRSensor1);
-  IRState2 = digitalRead(IRSensor2);
-  IRState3 = digitalRead(IRSensor3);
+  IRState1 = ballpresent(IRSensor1);
+  IRState2 = ballpresent(IRSensor2);
+  IRState3 = ballpresent(IRSensor3);
   
   // append to array
   json.add("Time Stamp", local_time);
