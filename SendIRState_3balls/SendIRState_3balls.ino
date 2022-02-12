@@ -262,6 +262,11 @@ void loop(){
     // push json
     Firebase.RTDB.pushJSON(&fbdo, JSONPushPath.c_str(), &json);
 
+    // if totalballs are less than a threshold, push to order json path
+    if (TotalBalls < 2) {
+      Firebase.RTDB.pushJSON(&fbdo, OrderPath.c_str(), &json);
+    }
+
     
   }
   delay(100);
