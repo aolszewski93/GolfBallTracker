@@ -33,8 +33,10 @@
 #define API_KEY "AIzaSyDnWsodRXPRbEv_BEgTsW8yux7czINvzC4"
 
 // Insert Authorized Email and Corresponding Password
-#define USER_EMAIL "al.m.olszewski@gmail.com"
-#define USER_PASSWORD "Babyyyyy"
+//#define USER_EMAIL "al.m.olszewski@gmail.com"
+//#define USER_PASSWORD "Babyyyyy"
+#define USER_EMAIL "joestoutt55@gmail.com"
+#define USER_PASSWORD "Bummer94!!"
 
 // Insert RTDB URLefine the RTDB URL
 #define DATABASE_URL "https://golfballerz-default-rtdb.firebaseio.com/"
