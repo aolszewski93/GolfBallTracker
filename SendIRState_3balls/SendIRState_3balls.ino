@@ -36,7 +36,7 @@
 //#define USER_EMAIL "al.m.olszewski@gmail.com"
 //#define USER_PASSWORD "Babyyyyy"
 #define USER_EMAIL "joestoutt55@gmail.com"
-#define USER_PASSWORD "Bummer94!!"
+#define USER_PASSWORD "Bummer94!"
 
 // Insert RTDB URLefine the RTDB URL
 #define DATABASE_URL "https://golfballerz-default-rtdb.firebaseio.com/"
@@ -72,7 +72,12 @@ int TotalBalls = 0; //keeps track of total balls
 
 // Timer variables (send new readings every minute)
 unsigned long sendDataPrevMillis = 0;
-unsigned long timerDelay = 60000;
+// one reading once a minute
+//unsigned long timerDelay = 60000;
+// reading once an hour
+unsigned long timerDelay = 3600000;
+//reading once a day
+//unsigned long timerDelay = 86400000;
 
 // Json Object array
 //FirebaseJsonArray array;
