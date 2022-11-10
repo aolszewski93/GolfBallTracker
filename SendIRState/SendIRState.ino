@@ -22,15 +22,15 @@
 #include "addons/RTDBHelper.h"
 
 // Insert your network credentials
-#define WIFI_SSID "daddyshouse"
-#define WIFI_PASSWORD "Babyyyyy"
+#define WIFI_SSID "ssid"
+#define WIFI_PASSWORD "password"
 
 // Insert Firebase project API Key
-#define API_KEY "AIzaSyDnWsodRXPRbEv_BEgTsW8yux7czINvzC4"
+#define API_KEY "API_Key"
 
 // Insert Authorized Email and Corresponding Password
-#define USER_EMAIL "al.m.olszewski@gmail.com"
-#define USER_PASSWORD "Babyyyyy"
+#define USER_EMAIL "user email"
+#define USER_PASSWORD "user password"
 
 // Insert RTDB URLefine the RTDB URL
 #define DATABASE_URL "https://golfballerz-default-rtdb.firebaseio.com/"
